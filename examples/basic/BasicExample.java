@@ -1,4 +1,3 @@
-package basic;
 /*
  * socket.io-java-client Test.java
  *
@@ -7,11 +6,11 @@ package basic;
  * 
  * See LICENSE file for more information
  */
+
 import io.socket.IOAcknowledge;
 import io.socket.IOCallback;
 import io.socket.SocketIO;
 import io.socket.SocketIOException;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -31,7 +30,7 @@ public class BasicExample implements IOCallback {
 
 	public BasicExample() throws Exception {
 		socket = new SocketIO();
-		socket.connect("http://127.0.0.1:3001/", this);
+		socket.connect("http://10.168.1.92:23123/", this);
 
 		// Sends a string to the server.
 		socket.send("Hello Server");

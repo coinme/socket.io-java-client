@@ -8,9 +8,14 @@
  */
 package io.socket;
 
-import static org.junit.Assert.*;
-
 import io.socket.testutils.MutateProxy;
+import io.socket.testutils.RandomBlockJUnit4ClassRunner;
+import org.json.JSONObject;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,18 +24,13 @@ import java.util.Arrays;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import org.json.JSONObject;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import static org.junit.Assert.*;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class AbstractTestSocketIO.
  */
-@RunWith(io.socket.testutils.RandomBlockJUnit4ClassRunner.class)
+@RunWith(RandomBlockJUnit4ClassRunner.class)
 public abstract class AbstractTestSocketIO implements IOCallback {
 
 	private static final String REQUEST_ACKNOWLEDGE = "requestAcknowledge";
@@ -188,7 +188,8 @@ public abstract class AbstractTestSocketIO implements IOCallback {
 	 * @throws Exception
 	 *             the exception
 	 */
-	void doConnect() throws Exception {
+    @Test
+	public void doConnect() throws Exception {
 		// Setting up socket connection
 		socket = new SocketIO("http://127.0.0.1:" + getProxyPort() + "/main",
 				this);

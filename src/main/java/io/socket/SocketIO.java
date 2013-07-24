@@ -1,11 +1,3 @@
-/*
- * socket.io-java-client SocketIO.java
- *
- * Copyright (c) 2012, Enno Boland
- * socket.io-java-client is a implementation of the socket.io protocol in Java.
- * 
- * See LICENSE file for more information
- */
 package io.socket;
 
 import java.net.MalformedURLException;
@@ -13,7 +5,6 @@ import java.net.URL;
 import java.util.Properties;
 
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
 
 import org.json.JSONObject;
 

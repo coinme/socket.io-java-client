@@ -1,9 +1,9 @@
 package io.socket.testutils;
 
-import java.util.Collections;
-
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.InitializationError;
+
+import java.util.Collections;
 
 
 // See http://stackoverflow.com/questions/1444314/how-can-i-make-my-junit-tests-run-in-random-order

@@ -1,11 +1,3 @@
-/*
- * socket.io-java-client IOAcknowledge.java
- *
- * Copyright (c) 2012, Enno Boland
- * PROJECT DESCRIPTION
- * 
- * See LICENSE file for more information
- */
 package io.socket;
 
 import org.json.JSONArray;
