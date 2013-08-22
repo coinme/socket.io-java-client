@@ -498,11 +498,16 @@ public abstract class AbstractTestSocketIO implements IOCallback {
 		this.args.addAll(Arrays.asList(args));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see io.socket.IOCallback#onError(io.socket.SocketIOException)
-	 */
+    @Override
+    public void onSessionId(String sessionId) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /*
+      * (non-Javadoc)
+      *
+      * @see io.socket.IOCallback#onError(io.socket.SocketIOException)
+      */
 	@Override
 	public void onError(SocketIOException socketIOException) {
 		socketIOException.printStackTrace();

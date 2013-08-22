@@ -24,7 +24,14 @@ public interface IOCallback {
 	 * @param ack an {@link IOAcknowledge} instance, may be <code>null</code> if there's none
 	 */
 	void onMessage(String data, IOAcknowledge ack);
-	
+
+    /**
+     * Fires when a sessionId has been established for the connection
+     *
+     * @param sessionId
+     */
+    void onSessionId(String sessionId);
+
 	/**
 	 * On message. Called when the server sends JSON data.
 	 *

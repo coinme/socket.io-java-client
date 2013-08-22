@@ -1,12 +1,11 @@
 package io.socket;
 
+import org.json.JSONObject;
+
+import javax.net.ssl.SSLContext;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
-
-import javax.net.ssl.SSLContext;
-
-import org.json.JSONObject;
 
 /**
  * The Class SocketIO.
@@ -117,7 +116,7 @@ public class SocketIO {
 	
 	/**
 	 * Set the socket factory used for SSL connections.
-	 * @param socketFactory
+	 * @param sslContext
 	 */
 	public static void setDefaultSSLSocketFactory(SSLContext sslContext) {
 		IOConnection.setSslContext(sslContext);
