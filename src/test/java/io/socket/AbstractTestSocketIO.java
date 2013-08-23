@@ -8,9 +8,11 @@
  */
 package io.socket;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.socket.testutils.MutateProxy;
 import io.socket.testutils.RandomBlockJUnit4ClassRunner;
-import org.json.JSONObject;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -253,7 +255,7 @@ public abstract class AbstractTestSocketIO implements IOCallback {
 		assertEquals("Test String", "on", takeEvent());
 		assertEquals(str, takeArg());
 
-		JSONObject obj = new JSONObject("{'foo':'bar'}");
+		JsonObject obj = (JsonObject)new JsonParser().parse("{'foo':'bar'}");
 		socket.emit("echo", obj);
 		assertEquals("Test JSON", "on", takeEvent());
 		assertEquals(obj.toString(), takeArg().toString());
@@ -478,7 +480,7 @@ public abstract class AbstractTestSocketIO implements IOCallback {
 	 * io.socket.IOAcknowledge)
 	 */
 	@Override
-	public void onMessage(JSONObject json, IOAcknowledge ack) {
+	public void onMessage(JsonElement json, IOAcknowledge ack) {
 		events.add("onMessage_json");
 		this.args.add(json);
 	}

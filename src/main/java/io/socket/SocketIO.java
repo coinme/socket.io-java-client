@@ -1,6 +1,7 @@
 package io.socket;
 
-import org.json.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import javax.net.ssl.SSLContext;
 import java.net.MalformedURLException;
@@ -25,6 +26,9 @@ public class SocketIO {
 	private Properties headers = new Properties();
 
 	private URL url;
+
+    private Gson gson = new GsonBuilder()
+            .create();
 
 	/**
 	 * Instantiates a new socket.io connection. The object connects after
@@ -207,7 +211,7 @@ public class SocketIO {
 			if (this.namespace.equals("/")) {
 				this.namespace = "";
 			}
-			this.connection = IOConnection.register(origin, this);
+			this.connection = IOConnection.register(origin, this, gson);
 			return true;
 		}
 		return false;
@@ -221,7 +225,7 @@ public class SocketIO {
 	 * @param event
 	 *            the event name
 	 * @param args
-	 *            arguments. can be any argument {@link org.json.JSONArray#put(Object)} can take. 
+     *            arguments. can be any argument {@link com.google.gson.Gson#toJson(Object)})} can take.
 	 */
 	public void emit(final String event, final Object... args) {
 		this.connection.emit(this, event, null, args);
@@ -237,7 +241,7 @@ public class SocketIO {
 	 * @param ack
 	 *            an acknowledge implementation
 	 * @param args
-	 *            arguments. can be any argument {@link org.json.JSONArray#put(Object)} can take. 
+	 *            arguments. can be any argument {@link com.google.gson.Gson#toJson(Object)})} can take.
 	 */
 	public void emit(final String event, IOAcknowledge ack,
 			final Object... args) {
@@ -268,7 +272,7 @@ public class SocketIO {
 	 * @param json
 	 *            the JSON object
 	 */
-	public void send(final JSONObject json) {
+	public void send(final Object json) {
 		this.connection.send(this, null, json);
 	}
 
@@ -280,7 +284,7 @@ public class SocketIO {
 	 * @param json
 	 *            the JSON object
 	 */
-	public void send(IOAcknowledge ack, final JSONObject json) {
+	public void send(IOAcknowledge ack, final Object json) {
 		this.connection.send(this, ack, json);
 	}
 
@@ -391,4 +395,24 @@ public class SocketIO {
 			return this.headers.getProperty(key);
 		return null;
 	}
+
+    public String getSessionId() {
+        if (connection == null) {
+            return null;
+        }
+
+        return connection.getSessionId();
+    }
+
+    public Gson getGson() {
+        return gson;
+    }
+
+    public void setGson(Gson gson) {
+        this.gson = gson;
+
+        if (this.connection != null) {
+            this.connection.setGson(gson);
+        }
+    }
 }
