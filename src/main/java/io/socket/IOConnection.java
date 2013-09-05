@@ -325,7 +325,7 @@ class IOConnection implements IOCallback {
 			transport = XhrTransport.create(url, this);
 		else {
 			error(new SocketIOException(
-					"Server supports no available transports. You should reconfigure the server to support a available transport"));
+					"Server supports no available transports. You should reconfigure the server to support an available transport"));
 			return;
 		}
 		transport.connect();
