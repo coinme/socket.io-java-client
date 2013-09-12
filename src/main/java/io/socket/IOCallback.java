@@ -55,4 +55,6 @@ public interface IOCallback {
 	 * @param socketIOException the last exception describing the error
 	 */
 	void onError(SocketIOException socketIOException);
+
+    void onState(int state);
 }

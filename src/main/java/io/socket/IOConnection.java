@@ -18,29 +18,29 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
 * The Class IOConnection.
 */
-class IOConnection implements IOCallback {
+public class IOConnection implements IOCallback {
 	/** Debug LOGGER */
 	static final Logger LOGGER = LoggerFactory.getLogger(IOConnection.class);
 
 	public static final String FRAME_DELIMITER = "\ufffd";
 
 	/** The Constant STATE_INIT. */
-	private static final int STATE_INIT = 0;
+	public static final int STATE_INIT = 0;
 
 	/** The Constant STATE_HANDSHAKE. */
-	private static final int STATE_HANDSHAKE = 1;
+    public static final int STATE_HANDSHAKE = 1;
 
 	/** The Constant STATE_CONNECTING. */
-	private static final int STATE_CONNECTING = 2;
+    public static final int STATE_CONNECTING = 2;
 
 	/** The Constant STATE_READY. */
-	private static final int STATE_READY = 3;
+    public static final int STATE_READY = 3;
 
 	/** The Constant STATE_INTERRUPTED. */
-	private static final int STATE_INTERRUPTED = 4;
+    public static final int STATE_INTERRUPTED = 4;
 
 	/** The Constant STATE_INVALID. */
-	private static final int STATE_INVALID = 6;
+    public static final int STATE_INVALID = 6;
 
 	/** The state. */
 	private int state = STATE_INIT;
@@ -142,27 +142,27 @@ class IOConnection implements IOCallback {
 	}
 
 	/** The reconnect task. Null if no reconnection is in progress. */
-	private ReconnectTask reconnectTask = null;
+//	private ReconnectTask reconnectTask = null;
 
 	/**
 	 * The Class ReconnectTask. Handles reconnect attempts
 	 */
-	private class ReconnectTask extends TimerTask {
-
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see java.util.TimerTask#run()
-		 */
-		@Override
-		public void run() {
-			connectTransport();
-			if (!keepAliveInQueue) {
-				sendPlain("2::");
-				keepAliveInQueue = true;
-			}
-		}
-	}
+//	private class ReconnectTask extends TimerTask {
+//
+//		/*
+//		 * (non-Javadoc)
+//		 *
+//		 * @see java.util.TimerTask#run()
+//		 */
+//		@Override
+//		public void run() {
+//			connectTransport();
+//			if (!keepAliveInQueue) {
+//				sendPlain("2::");
+//				keepAliveInQueue = true;
+//			}
+//		}
+//	}
 
 	/**
 	 * The Class ConnectThread. Handles connecting to the server with an
@@ -510,10 +510,10 @@ class IOConnection implements IOCallback {
 	 */
 	public synchronized void transportConnected() {
 		setState(STATE_READY);
-		if (reconnectTask != null) {
-			reconnectTask.cancel();
-			reconnectTask = null;
-		}
+//		if (reconnectTask != null) {
+//			reconnectTask.cancel();
+//			reconnectTask = null;
+//		}
 		resetTimeout();
 		if (transport.canSendBulk()) {
 			ConcurrentLinkedQueue<String> outputBuffer = this.outputBuffer;
@@ -548,7 +548,7 @@ class IOConnection implements IOCallback {
 	public void transportDisconnected() {
 		this.lastException = null;
 		setState(STATE_INTERRUPTED);
-		reconnect();
+//		reconnect();
 	}
 
 	/**
@@ -561,7 +561,7 @@ class IOConnection implements IOCallback {
 	public void transportError(Exception error) {
 		this.lastException = error;
 		setState(STATE_INTERRUPTED);
-		reconnect();
+//		reconnect();
 	}
 
 	/**
@@ -754,17 +754,17 @@ class IOConnection implements IOCallback {
 	 * forces a reconnect. This had become useful on some android devices which
 	 * do not shut down TCP-connections when switching from HSDPA to Wifi
 	 */
-	public synchronized void reconnect() {
-		if (getState() != STATE_INVALID) {
-			invalidateTransport();
-			setState(STATE_INTERRUPTED);
-			if (reconnectTask != null) {
-				reconnectTask.cancel();
-			}
-			reconnectTask = new ReconnectTask();
-			backgroundTimer.schedule(reconnectTask, 1000);
-		}
-	}
+//	public synchronized void reconnect() {
+//		if (getState() != STATE_INVALID) {
+//			invalidateTransport();
+//			setState(STATE_INTERRUPTED);
+//			if (reconnectTask != null) {
+//				reconnectTask.cancel();
+//			}
+//			reconnectTask = new ReconnectTask();
+//			backgroundTimer.schedule(reconnectTask, 1000);
+//		}
+//	}
 
 	/**
 	 * Returns the session id. This should be called from a {@link IOTransport}
@@ -865,8 +865,11 @@ class IOConnection implements IOCallback {
 	 *            the new state
 	 */
 	private synchronized void setState(int state) {
-		if (getState() != STATE_INVALID)
+		if (getState() != STATE_INVALID) {
 			this.state = state;
+
+            onState(state);
+        }
 	}
 
 	/**
@@ -927,6 +930,13 @@ class IOConnection implements IOCallback {
 		for (SocketIO socket : sockets.values())
 			socket.getCallback().onError(socketIOException);
 	}
+
+    @Override
+    public void onState(int state) {
+        for (SocketIO socket : sockets.values()) {
+            socket.getCallback().onState(state);
+        }
+    }
 
     public Gson getGson() {
         return gson;
