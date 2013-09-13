@@ -516,7 +516,12 @@ public abstract class AbstractTestSocketIO implements IOCallback {
 		events.add("onError");
 	}
 
-	/**
+    @Override
+    public void onState(int state) {
+        events.add("onState");
+    }
+
+    /**
 	 * Gets the port.
 	 * 
 	 * @return the port

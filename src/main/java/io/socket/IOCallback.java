@@ -57,4 +57,5 @@ public interface IOCallback {
 	void onError(SocketIOException socketIOException);
 
     void onState(int state);
+
 }
