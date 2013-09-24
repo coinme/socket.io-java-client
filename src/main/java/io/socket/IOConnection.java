@@ -221,7 +221,7 @@ public class IOConnection implements IOCallback {
 	static public IOConnection register(String origin, SocketIO socket, Gson gson) {
 		List<IOConnection> list = connections.get(origin);
 		if (list == null) {
-			list = new LinkedList<IOConnection>();
+			list = Collections.synchronizedList(new LinkedList<IOConnection>());
 			connections.put(origin, list);
 		} else {
 			synchronized (list) {
