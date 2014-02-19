@@ -304,8 +304,12 @@ public class IOConnection implements IOCallback {
 			response = in.nextLine();
 			String[] data = response.split(":");
             this.onSessionId(data[0]);
+
 			heartbeatTimeout = Long.parseLong(data[1]) * 1000;
 			closingTimeout = Long.parseLong(data[2]) * 1000;
+
+            LOGGER.debug(String.format("Setting heartbeat interval to %dms, close time to %sms.", heartbeatTimeout, closingTimeout));
+
 			protocols = Arrays.asList(data[3].split(","));
 		} catch (Exception e) {
 			error(new SocketIOException("Error while handshaking", e));
