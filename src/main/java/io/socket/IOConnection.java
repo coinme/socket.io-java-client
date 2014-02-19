@@ -284,8 +284,10 @@ public class IOConnection implements IOCallback {
 		URLConnection connection;
 		try {
 			setState(STATE_HANDSHAKE);
-			url = new URL(IOConnection.this.url.toString() + SOCKET_IO_1);
-			connection = url.openConnection();
+            String connectUrl = IOConnection.this.url.toString() + SOCKET_IO_1;
+            LOGGER.debug(connectUrl);
+
+			connection = new URL(connectUrl).openConnection();
 			if (connection instanceof HttpsURLConnection) {
 				((HttpsURLConnection) connection)
 						.setSSLSocketFactory(sslContext.getSocketFactory());
@@ -305,10 +307,12 @@ public class IOConnection implements IOCallback {
 			String[] data = response.split(":");
             this.onSessionId(data[0]);
 
+            LOGGER.debug(response);
+
 			heartbeatTimeout = Long.parseLong(data[1]) * 1000;
 			closingTimeout = Long.parseLong(data[2]) * 1000;
 
-            LOGGER.debug(String.format("Setting heartbeat interval to %dms, close time to %sms.", heartbeatTimeout, closingTimeout));
+            LOGGER.debug(String.format("Setting heartbeat timeout to %ds, close timeout to %ss.", heartbeatTimeout / 1000, closingTimeout / 1000));
 
 			protocols = Arrays.asList(data[3].split(","));
 		} catch (Exception e) {
