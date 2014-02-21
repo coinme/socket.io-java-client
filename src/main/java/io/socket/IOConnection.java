@@ -142,27 +142,27 @@ public class IOConnection implements IOCallback {
 	}
 
 	/** The reconnect task. Null if no reconnection is in progress. */
-//	private ReconnectTask reconnectTask = null;
+	private ReconnectTask reconnectTask = null;
 
 	/**
 	 * The Class ReconnectTask. Handles reconnect attempts
 	 */
-//	private class ReconnectTask extends TimerTask {
-//
-//		/*
-//		 * (non-Javadoc)
-//		 *
-//		 * @see java.util.TimerTask#run()
-//		 */
-//		@Override
-//		public void run() {
-//			connectTransport();
-//			if (!keepAliveInQueue) {
-//				sendPlain("2::");
-//				keepAliveInQueue = true;
-//			}
-//		}
-//	}
+	private class ReconnectTask extends TimerTask {
+
+		/*
+		 * (non-Javadoc)
+		 *
+		 * @see java.util.TimerTask#run()
+		 */
+		@Override
+		public void run() {
+			connectTransport();
+			if (!keepAliveInQueue) {
+				sendPlain("2::");
+				keepAliveInQueue = true;
+			}
+		}
+	}
 
 	/**
 	 * The Class ConnectThread. Handles connecting to the server with an
@@ -420,6 +420,8 @@ public class IOConnection implements IOCallback {
 	 * Cleanup. IOConnection is not usable after this calling this.
 	 */
 	private synchronized void cleanup() {
+        LOGGER.info("Cleanup begin.");
+
 		setState(STATE_INVALID);
 		if (transport != null)
 			transport.disconnect();
@@ -431,7 +433,7 @@ public class IOConnection implements IOCallback {
 			else
 				connections.remove(urlStr);
 		}
-		LOGGER.info("Cleanup");
+		LOGGER.info("Cleanup complete.");
 		backgroundTimer.cancel();
 	}
 
@@ -482,10 +484,15 @@ public class IOConnection implements IOCallback {
 	 */
 	private synchronized void resetTimeout() {
 		if (heartbeatTimeoutTask != null) {
+            LOGGER.debug("Cancelling existing heartbeatTimeoutTask.");
+
 			heartbeatTimeoutTask.cancel();
 		}
+
 		if (getState() != STATE_INVALID) {
-			heartbeatTimeoutTask = new HearbeatTimeoutTask();
+            LOGGER.warn("Scheduling heartbeatTimeoutTask for " + new Date(System.currentTimeMillis() + closingTimeout + heartbeatTimeout));
+
+            heartbeatTimeoutTask = new HearbeatTimeoutTask();
 			backgroundTimer.schedule(heartbeatTimeoutTask, closingTimeout
 					+ heartbeatTimeout);
 		}
@@ -518,10 +525,10 @@ public class IOConnection implements IOCallback {
 	 */
 	public synchronized void transportConnected() {
 		setState(STATE_READY);
-//		if (reconnectTask != null) {
-//			reconnectTask.cancel();
-//			reconnectTask = null;
-//		}
+		if (reconnectTask != null) {
+			reconnectTask.cancel();
+			reconnectTask = null;
+		}
 		resetTimeout();
 		if (transport.canSendBulk()) {
 			ConcurrentLinkedQueue<String> outputBuffer = this.outputBuffer;
@@ -762,17 +769,17 @@ public class IOConnection implements IOCallback {
 	 * forces a reconnect. This had become useful on some android devices which
 	 * do not shut down TCP-connections when switching from HSDPA to Wifi
 	 */
-//	public synchronized void reconnect() {
-//		if (getState() != STATE_INVALID) {
-//			invalidateTransport();
-//			setState(STATE_INTERRUPTED);
-//			if (reconnectTask != null) {
-//				reconnectTask.cancel();
-//			}
-//			reconnectTask = new ReconnectTask();
-//			backgroundTimer.schedule(reconnectTask, 1000);
-//		}
-//	}
+	public synchronized void reconnect() {
+		if (getState() != STATE_INVALID) {
+			invalidateTransport();
+			setState(STATE_INTERRUPTED);
+			if (reconnectTask != null) {
+				reconnectTask.cancel();
+			}
+			reconnectTask = new ReconnectTask();
+			backgroundTimer.schedule(reconnectTask, 1000);
+		}
+	}
 
 	/**
 	 * Returns the session id. This should be called from a {@link IOTransport}

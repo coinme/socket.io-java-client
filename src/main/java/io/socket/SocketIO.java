@@ -323,9 +323,9 @@ public class SocketIO {
 	 * This had become useful on some android devices which do not shut down
 	 * tcp-connections when switching from HSDPA to Wifi
 	 */
-//	public void reconnect() {
-//		this.connection.reconnect();
-//	}
+	public void reconnect() {
+		this.connection.reconnect();
+	}
 
 	/**
 	 * Returns, if a connection is established at the moment
