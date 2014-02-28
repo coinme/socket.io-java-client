@@ -484,13 +484,17 @@ public class IOConnection implements IOCallback {
 	 */
 	private synchronized void resetTimeout() {
 		if (heartbeatTimeoutTask != null) {
-            LOGGER.debug("Cancelling existing heartbeatTimeoutTask.");
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Cancelling existing heartbeatTimeoutTask.");
+            }
 
 			heartbeatTimeoutTask.cancel();
 		}
 
 		if (getState() != STATE_INVALID) {
-            LOGGER.warn("Scheduling heartbeatTimeoutTask for " + new Date(System.currentTimeMillis() + closingTimeout + heartbeatTimeout));
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace("Scheduling heartbeatTimeoutTask for " + new Date(System.currentTimeMillis() + closingTimeout + heartbeatTimeout));
+            }
 
             heartbeatTimeoutTask = new HearbeatTimeoutTask();
 			backgroundTimer.schedule(heartbeatTimeoutTask, closingTimeout
