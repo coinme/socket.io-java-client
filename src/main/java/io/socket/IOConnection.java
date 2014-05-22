@@ -278,14 +278,14 @@ public class IOConnection implements IOCallback {
 	 * Handshake.
 	 *
 	 */
-	private void handshake() {
+	private synchronized void handshake() {
 		URL url;
 		String response;
 		URLConnection connection;
 		try {
 			setState(STATE_HANDSHAKE);
             String connectUrl = IOConnection.this.url.toString() + SOCKET_IO_1;
-            LOGGER.debug(connectUrl);
+            LOGGER.debug(this.hashCode() + ": " + connectUrl);
 
 			connection = new URL(connectUrl).openConnection();
 			if (connection instanceof HttpsURLConnection) {
@@ -307,7 +307,7 @@ public class IOConnection implements IOCallback {
 			String[] data = response.split(":");
             this.onSessionId(data[0]);
 
-            LOGGER.debug(response);
+            LOGGER.debug(this.hashCode() + ": " + response);
 
 			heartbeatTimeout = Long.parseLong(data[1]) * 1000;
 			closingTimeout = Long.parseLong(data[2]) * 1000;
@@ -420,7 +420,7 @@ public class IOConnection implements IOCallback {
 	 * Cleanup. IOConnection is not usable after this calling this.
 	 */
 	private synchronized void cleanup() {
-        LOGGER.info("Cleanup begin.");
+        LOGGER.info(this.hashCode() + ": " + "Cleanup begin.");
 
 		setState(STATE_INVALID);
 		if (transport != null)
@@ -433,7 +433,7 @@ public class IOConnection implements IOCallback {
 			else
 				connections.remove(urlStr);
 		}
-		LOGGER.info("Cleanup complete.");
+		LOGGER.info(this.hashCode() + ": " + "Cleanup complete.");
 		backgroundTimer.cancel();
 	}
 
@@ -459,10 +459,10 @@ public class IOConnection implements IOCallback {
 	private synchronized void sendPlain(String text) {
 		if (getState() == STATE_READY)
 			try {
-				LOGGER.info("> " + text);
+				LOGGER.info(this.hashCode() + ": " + "> " + text);
 				transport.send(text);
 			} catch (Exception e) {
-				LOGGER.info("IOEx: saving");
+				LOGGER.info(this.hashCode() + ": " + "IOEx: sendPlain" + e);
 				outputBuffer.add(text);
 			}
 		else {
@@ -516,7 +516,7 @@ public class IOConnection implements IOCallback {
 			return this;
 		SocketIO socket = sockets.get(message.getEndpoint());
 		if (socket == null) {
-			throw new SocketIOException("Cannot find socket for '"
+			throw new SocketIOException(this.hashCode() + ": " + "Cannot find socket for '"
 					+ message.getEndpoint() + "'");
 		}
 		return socket.getCallback();
@@ -543,7 +543,7 @@ public class IOConnection implements IOCallback {
 						.size()]);
 				LOGGER.info("Bulk start:");
 				for (String text : texts) {
-					LOGGER.info("> " + text);
+					LOGGER.info(this.hashCode() + ": " + "> " + text);
 				}
 				LOGGER.info("Bulk end");
 				// DEBUG END
@@ -621,7 +621,7 @@ public class IOConnection implements IOCallback {
 	 *            the text
 	 */
 	public void transportMessage(String text) {
-		LOGGER.info("< " + text);
+		LOGGER.info(this.hashCode() + ": " + "< " + text);
 		IOMessage message;
 		try {
 			message = new IOMessage(text);
@@ -764,7 +764,7 @@ public class IOConnection implements IOCallback {
 		case IOMessage.TYPE_NOOP:
 			break;
 		default:
-			LOGGER.warn("Unkown type received" + message.getType());
+			LOGGER.warn("Unknown type received" + message.getType());
 			break;
 		}
 	}
@@ -904,6 +904,7 @@ public class IOConnection implements IOCallback {
 	public void onDisconnect() {
 		SocketIO socket = sockets.get("");
 		if (socket != null)
+            LOGGER.error(this.hashCode() + ": onDisconnect");
 			socket.getCallback().onDisconnect();
 	}
 
@@ -911,6 +912,7 @@ public class IOConnection implements IOCallback {
 	public void onConnect() {
 		SocketIO socket = sockets.get("");
 		if (socket != null)
+            LOGGER.error(this.hashCode() + ": onConnect");
 			socket.getCallback().onConnect();
 	}
 
