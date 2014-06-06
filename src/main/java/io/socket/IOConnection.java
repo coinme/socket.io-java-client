@@ -278,8 +278,7 @@ public class IOConnection implements IOCallback {
 	 * Handshake.
 	 *
 	 */
-	private synchronized void handshake() {
-		URL url;
+	private void handshake() {
 		String response;
 		URLConnection connection;
 		try {
