@@ -166,6 +166,9 @@ public class IOConnection implements IOCallback {
 
 	/**
 	 * The Class ConnectThread. Handles connecting to the server with an
+     *
+     * TODO: This is a thread boundary. We should wakelock around here. Not sure.
+     *
 	 * {@link IOTransport}
 	 */
 	private class ConnectThread extends Thread {
