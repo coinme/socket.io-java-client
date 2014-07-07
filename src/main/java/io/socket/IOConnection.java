@@ -185,6 +185,11 @@ public class IOConnection implements IOCallback {
 		 */
 		@Override
 		public void run() {
+            if (isConnected()) {
+                LOGGER.warn("Was already connected, not attempting to connect.");
+                return;
+            }
+
 			if (IOConnection.this.getState() == STATE_INIT) {
 				handshake();
             }
